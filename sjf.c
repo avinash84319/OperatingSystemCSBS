@@ -1,46 +1,30 @@
 #include<stdio.h>
-int main(){
-    int p[15],bt[15],wt[15],tat[15],i,j,n,total=0,pos,temp;
-    float avg_wt,avg_tat;
-    printf("Enter number of process:");
-    scanf("%d",&n);
-    for(i=0;i<n;i++){
-        printf("Enter process %d burst time:",i+1);
-        scanf("%d",&bt[i]);
-        p[i]=i+1;
+int main() {
+  int time, burst_time[10], at[10], sum_burst_time = 0, smallest, n, i;
+  int sumt = 0, sumw = 0;
+  printf("enter the no of processes : ");
+  scanf("%d", & n);
+  for (i = 0; i < n; i++) {
+    printf("the arrival time for process P%d : ", i + 1);
+    scanf("%d", & at[i]);
+    printf("the burst time for process P%d : ", i + 1);
+    scanf("%d", & burst_time[i]);
+    sum_burst_time += burst_time[i];
+  }
+  burst_time[9] = 9999;
+  for (time = 0; time < sum_burst_time;) {
+    smallest = 9;
+    for (i = 0; i < n; i++) {
+      if (at[i] <= time && burst_time[i] > 0 && burst_time[i] < burst_time[smallest])
+        smallest = i;
     }
-    //sorting burst time in ascending order using selection sort
-    for(i=0;i<n;i++){
-        pos=i;
-        for(j=i+1;j<n;j++){
-            if(bt[j]<bt[pos])
-                pos=j;
-        }
-        temp=bt[i];
-        bt[i]=bt[pos];
-        bt[pos]=temp;
-        temp=p[i];
-        p[i]=p[pos];
-        p[pos]=temp;
-    }
-    wt[0]=0; //waiting time for first process is 0
-    //calculating waiting time
-    for(i=1;i<n;i++){
-        wt[i]=0;
-        for(j=0;j<i;j++)
-            wt[i]+=bt[j];
-        total+=wt[i];
-    }
-    avg_wt=(float)total/n; //average waiting time
-    total=0;
-    printf("\nProcess\t    Burst Time    \tWaiting Time\tTurnaround Time");
-    for(i=0;i<n;i++){
-        tat[i]=bt[i]+wt[i]; //calculating turnaround time
-        total+=tat[i];
-        printf("\nP[%d]\t\t  %d\t\t    %d\t\t\t%d",p[i],bt[i],wt[i],tat[i]);
-    }
-    avg_tat=(float)total/n; //average turnaround time
-    printf("\n\nAverage Waiting Time=%.2f",avg_wt);
-    printf("\nAverage Turnaround Time=%.2f\n",avg_tat);
-    return 0;
+    printf("P[%d]\t|\t%d\t|\t%d\n", smallest + 1, time + burst_time[smallest] - at[smallest], time - at[smallest]);
+    sumt += time + burst_time[smallest] - at[smallest];
+    sumw += time - at[smallest];
+    time += burst_time[smallest];
+    burst_time[smallest] = 0;
+  }
+  printf("\n\n average waiting time = %f", sumw * 1.0 / n);
+  printf("\n\n average turnaround time = %f", sumt * 1.0 / n);
+  return 0;
 }
